@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Map Page</title>
 
-    <!--Font-->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
-
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
@@ -43,29 +38,6 @@
         float: left;
         margin-right: 8px;
         opacity: 0.7;
-    }
-
-    .header {
-        line-height: 18px;
-        color: #555;
-        right: 37vw;
-        top:20px;
-
-    }
-    .header i {
-        width: 18px;
-        height: 18px;
-        float: left;
-        margin-left: 30px;
-        opacity: 0.7;
-    }
-    #siteHeader {
-        font-weight: bolder;
-        font-size: 40px;
-    }
-
-    body, body * {
-        font-family: 'DM Serif Display', serif;
     }
 </style>
 
@@ -208,9 +180,9 @@
 
                         // popup on hover
                         layer.bindPopup(
-                                "Neighborhood: <b>" + neighborhoodName + "</b><br><br>" +
-                                "Number of Immigrants Polled Here: " + (correspondingData == 0 ? "N/A" : correspondingData) + "<br>" +
-                                "Average Household Income: " + richesse
+                                "Neighborhood: <b>" + neighborhoodName + "<b><br><br>" +
+                                "Number of Immigrants: " + (correspondingData == 0 ? "N/A" : correspondingData) + "<br>" +
+                                "Average: " + richesse
                         );
 
                         // popup on click
@@ -239,9 +211,11 @@
                 const layerControl = L.control.layers(baseLayer, overlays).addTo(map);
                 
                 // adding legend
-                var legend = L.control({position: 'bottomright'});
+                var legend1 = L.control({position: 'bottomright'});
+                var legend2 = L.control({position: 'bottomright'});
 
-                legend.onAdd = function (map) {
+            
+                legend1.onAdd = function (map) {
                     
                     var div = L.DomUtil.create('div', 'info legend'),
                     grades = [30000, 50000, 65000, 80000, 100000],
@@ -256,9 +230,32 @@
                     return div;
                 };
 
-                legend.addTo(map);
+                legend1.addTo(map);
 
             });
+
+            // switch legends when changing layer groups
+            map.on('overlayadd', function(event) {
+                if(event.layer === geoJsonLayerWealth) {
+                    map.removeControl(variable2);
+                    variable1.addTo(map);
+                } else if(event.layer === geoJsonLayerPeople) {
+                    map.removeControl(legendWealth);
+                    variable2.addTo(map);
+                }
+            });
+
+            map.on('overlayremove',function() {
+                map.removeControl(variable1);
+                map.removeControl(variable2);
+            });
+
+            var overlays = {
+                "Wealth Layer": geoJsonLayerWealth,
+                "People Layer": geoJsonLayerPeople,
+            };
+
+            L.control.layers(baselayer,overlays).addTo(map);
         
             // getColor f-n
             function getColor(d) {
@@ -279,17 +276,6 @@
                                       '#CCCCCC';
                 }
     }
-
-    //header
-    var header = L.control({position: 'topright'});
-
-    header.onAdd = function (map) {
-    var div = L.DomUtil.create('div', 'info header'), labels = [];
-    div.innerHTML = '<div id="siteHeader">Immigrant Insights MTL</div>';
-    return div;
-};
-
-header.addTo(map);
     </script>
 </body>
 </html>
