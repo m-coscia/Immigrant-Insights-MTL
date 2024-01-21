@@ -72,8 +72,15 @@
                 }
 
                 function resetHighlight(e) {
-                    geoJsonLayer.resetStyle(e.target);
+                    geoJsonLayerWealth.resetStyle(e.target); //might break, look back into this
+                    geoJsonLayerPeople.resetStyle(e.target);
                 }
+
+                //Array for holding counters
+                const peopleCounters = new Array(19);
+                peopleCounters.forEach(element => {
+                    element = 0;
+                })
 
                 // Initializes the map
                 var map = L.map('map').setView([45.5569, -73.6870], 11);
@@ -92,7 +99,7 @@
                 });
 
                 // Adds GeoJSON layer to the map
-                var geoJsonLayer = L.geoJson(statesData, {
+                var geoJsonLayerWealth = L.geoJson(statesData, {
                     style: function(feature) {
                         return {
                             fillColor: getColor(feature.properties.RICHESSE),
@@ -118,6 +125,7 @@
                                 console.log("ARRON in CSV:", element.ARRON);
                                 if(element.ARRON == feature.properties.ARRON){
                                     correspondingData += 1;
+                                    peopleCounters[element.ARRON - 1] += 1;
                                     console.log("Hi!");
                                 }
                             });
@@ -126,7 +134,7 @@
                         
                         // popup on hover
                         layer.bindPopup(
-                                "Neighborhood: " + neighborhoodName + "<br>" +
+                                "Neighborhood: <b>" + neighborhoodName + "<b><br><br>" +
                                 "Number of Immigrants: " + (correspondingData == 0 ? "N/A" : correspondingData) + "<br>" +
                                 "Average: " + richesse
                         );
@@ -150,6 +158,56 @@
                         });
                     }
                 }).addTo(map);
+
+                var geoJsonLayerPeople = L.geoJson(statesData, {
+                    style: function(feature) {
+                        return {
+                            fillColor: getColor(peopleCounters[feature.properties.ARRON - 1]),
+                            weight: 2,
+                            opacity: 1,
+                            color: 'white',
+                            dashArray: '3',
+                            fillOpacity: 0.7
+                        };
+                    },
+
+                    onEachFeature: function(feature, layer) {
+                        // Access properties directly from GeoJSON
+                        var neighborhoodName = feature.properties.NOM;
+                        var richesse = feature.properties.RICHESSE;
+                        var correspondingData = peopleCounters[feature.properties.ARRON - 1];
+
+                        // popup on hover
+                        layer.bindPopup(
+                                "Neighborhood: <b>" + neighborhoodName + "<b><br><br>" +
+                                "Number of Immigrants: " + (correspondingData == 0 ? "N/A" : correspondingData) + "<br>" +
+                                "Average: " + richesse
+                        );
+
+                        // popup on click
+                        layer.on({
+                            click: function() {
+                                layer.openPopup();
+                            },
+                            mouseover: function(e) {
+                                highlightFeature(e);
+                            },
+                            mouseout: function(e) {
+                                resetHighlight(e);
+                            }
+                        });
+
+                        // close popup
+                        map.on('click', function() {
+                            layer.closePopup();
+                        });
+                    }
+                });
+
+                var baseLayer = {tiles}
+                var overlays = {geoJsonLayerWealth, geoJsonLayerPeople}
+
+                const layerControl = L.control.layers(baseLayer, overlays).addTo(map);
                 
                 // adding legend
                 var legend = L.control({position: 'bottomright'});
@@ -175,12 +233,22 @@
         
             // getColor f-n
             function getColor(d) {
-                return  d > 100000  ? '#B2391B' :
+                if(d > 500){
+                    return  d > 100000  ? '#B2391B' :
                         d > 80000  ?  '#ED5E3A' :
                         d > 65000   ? '#ED853A' :
                         d > 50000   ? '#F5A76F' :
                         d > 30000   ? '#F5D46F' :
                                       '#CCCCCC';
+                } else {
+                    return  d > 220  ? '#165C52' :
+                        d > 180  ?  '#288A7D' :
+                        d > 140   ? '#42B0A1' :
+                        d > 100   ? '#7DDDCF' :
+                        d > 50   ? '#ABF9EE' :
+                        d > 1   ? '#E0FFFA' :
+                                      '#CCCCCC';
+                }
     }
     </script>
 </body>
