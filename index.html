@@ -15,6 +15,9 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""></script>
 
+    <!-- D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
     <!-- Include your GeoJSON data -->
     <script src="states.js"></script>
 </head>
@@ -23,15 +26,45 @@
     <div id="map" style="height: 800px"></div>
 
     <script>
-        // Initialize the map
-        var map = L.map('map').setView([45.5569, -73.6870], 11);
+        // Load CSV data
+        d3.csv("sondage-echo-donnees-2020.csv", function(csvData) {
+            // Initialize the map
+            var map = L.map('map').setView([45.5569, -73.6870], 11);
 
-        var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
+            var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
 
-        L.geoJson(statesData).addTo(map);
+            // Add GeoJSON layer to the map
+            var geoJsonLayer = L.geoJson(statesData, {
+                onEachFeature: function(feature, layer) {
+                    // Access properties directly from GeoJSON
+                    var neighborhoodName = feature.properties.NOM;
+                    var richness = feature.properties.RICHESSE;
+
+                    // Find corresponding CSV data for the CODEID
+                    var correspondingData = csvData.find(function(csvRow) {
+                        return csvRow.CODEID === feature.properties.CODEID;
+                    });
+
+                    // Add a marker on hover
+                    layer.on('mouseover', function(event) {
+                        var marker = L.marker(event.latlng).addTo(map);
+                        marker.bindPopup(
+                            "Neighborhood: " + neighborhoodName + "<br>" +
+                            "Number of Immigrants: " + (correspondingData ? correspondingData.NUM : "N/A") + "<br>" +
+                            "Average: " + richness
+                        ).openPopup();
+                    });
+
+                    // Remove marker on mouseout
+                    layer.on('mouseout', function() {
+                        map.closePopup();
+                    });
+                }
+            }).addTo(map);
+        });
     </script>
 </body>
 </html>
