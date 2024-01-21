@@ -57,29 +57,35 @@
                         
                         /*
                         // Find corresponding CSV data for the ARRON
-                        var correspondingData = parsedCsvData.find(function(csvRow) {
-                            return csvRow.ARRON === feature.properties.ARRON;
+                        var correspondingData = 0;
+
+                        parsedCsvData.forEach(element => {
+                            if(element.ARRON === feature.properties.ARRON){
+                                correspondingData += 1;
+                            }
                         });
                         */
                         
                         var correspondingData = 0;
 
-                        parsedCsvData.forEach(element => {
+                        if(feature.properties.ARRON < 20){
+                            parsedCsvData.forEach(element => {
                             console.log("Neighborhood:", feature.properties.NOM);
                             console.log("ARRON in GeoJSON:", feature.properties.ARRON);
                             console.log("ARRON in CSV:", element.ARRON);
-                            if(element.ARRON === feature.properties.ARRON){
+                            if(element.ARRON == feature.properties.ARRON){
                                 correspondingData += 1;
                                 console.log("Hi!");
                             }
                         });
+                        }
 
                         // Add a marker on hover
                         layer.on('mouseover', function() {
                             var marker = L.marker(layer.getBounds().getCenter()).addTo(map);
                             marker.bindPopup(
                                 "Neighborhood: " + neighborhoodName + "<br>" +
-                                "Number of Immigrants: " + (correspondingData ? correspondingData.NUM : "N/A") + "<br>" +
+                                "Number of Immigrants: " + (correspondingData == 0 ? "N/A" : correspondingData) + "<br>" +
                                 "Average: " + richesse
                             ).openPopup();
                         });
