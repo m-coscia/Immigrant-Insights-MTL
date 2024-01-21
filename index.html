@@ -39,6 +39,29 @@
         margin-right: 8px;
         opacity: 0.7;
     }
+
+    .header {
+        line-height: 18px;
+        color: #555;
+        right: 37vw;
+        top:20px;
+
+    }
+    .header i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin-left: 30px;
+        opacity: 0.7;
+    }
+    #siteHeader {
+        font-weight: bolder;
+        font-size: 40px;
+    }
+
+    body, body * {
+        font-family: 'DM Serif Display', serif;
+    }
 </style>
 
 <body>
@@ -78,6 +101,16 @@
                 function resetHighlightPeople(e) {
                     geoJsonLayerPeople.resetStyle(e.target);
                 }
+
+                //header
+                var header = L.control({position: 'topright'});
+
+                header.onAdd = function (map) {
+                var div = L.DomUtil.create('div', 'info header'), labels = [];
+                div.innerHTML = '<div id="siteHeader">Immigrant Insights MTL</div>';
+                return div;
+                };
+                header.addTo(map);
 
                 //Array for holding counters
                 const peopleCounters = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -120,13 +153,9 @@
 
                         if(feature.properties.ARRON < 20) {
                             parsedCsvData.forEach(element => {
-                                console.log("Neighborhood:", feature.properties.NOM);
-                                console.log("ARRON in GeoJSON:", feature.properties.ARRON);
-                                console.log("ARRON in CSV:", element.ARRON);
                                 if(element.ARRON == feature.properties.ARRON){
                                     correspondingData += 1;
                                     peopleCounters[element.ARRON - 1] += 1;
-                                    console.log("Hi!");
                                 }
                             });
                         }
@@ -175,14 +204,13 @@
                         // Access properties directly from GeoJSON
                         var neighborhoodName = feature.properties.NOM;
                         var richesse = feature.properties.RICHESSE;
-                        console.log(peopleCounters);
                         var correspondingData = peopleCounters[feature.properties.ARRON - 1];
 
                         // popup on hover
                         layer.bindPopup(
-                                "Neighborhood: <b>" + neighborhoodName + "<b><br><br>" +
-                                "Number of Immigrants: " + (correspondingData == 0 ? "N/A" : correspondingData) + "<br>" +
-                                "Average: " + richesse
+                                "Neighborhood: <b>" + neighborhoodName + "</b><br><br>" +
+                                "Number of Immigrants Polled Here: " + (correspondingData == 0 ? "N/A" : correspondingData) + "<br>" +
+                                "Average Household Income: " + richesse
                         );
 
                         // popup on click
