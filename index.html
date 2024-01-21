@@ -61,12 +61,16 @@
                             return csvRow.ARRON === feature.properties.ARRON;
                         });
                         */
-
+                        
                         var correspondingData = 0;
 
                         parsedCsvData.forEach(element => {
+                            console.log("Neighborhood:", feature.properties.NOM);
+                            console.log("ARRON in GeoJSON:", feature.properties.ARRON);
+                            console.log("ARRON in CSV:", element.ARRON);
                             if(element.ARRON === feature.properties.ARRON){
                                 correspondingData += 1;
+                                console.log("Hi!");
                             }
                         });
 
