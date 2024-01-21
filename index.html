@@ -88,12 +88,13 @@
                                 "Average: " + richesse
                         );
 
-                        // popup on mouseover
-                        layer.on('mouseover', function() {
+                        // popup on click
+                        layer.on('click', function() {
                             layer.openPopup();
                         });
 
-                        layer.on('mouseout', function() {
+                        // close popup
+                        map.on('click', function() {
                             layer.closePopup();
                         });
                     }
