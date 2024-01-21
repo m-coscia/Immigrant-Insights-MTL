@@ -27,44 +27,56 @@
 
     <script>
         // Load CSV data
-        d3.csv("sondage-echo-donnees-2020.csv", function(csvData) {
-            // Initialize the map
-            var map = L.map('map').setView([45.5569, -73.6870], 11);
+        fetch("sondage-echo-donnees-2020.csv")
+            .then(response => response.text())
+            .then(csvData => {
+                // Parse CSV data
+                var parsedCsvData = d3.csvParse(csvData);
 
-            var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }).addTo(map);
+                console.log(parsedCsvData); // Log the parsed CSV data to the console
 
-            // Add GeoJSON layer to the map
-            var geoJsonLayer = L.geoJson(statesData, {
-                onEachFeature: function(feature, layer) {
-                    // Access properties directly from GeoJSON
-                    var neighborhoodName = feature.properties.NOM;
-                    var richness = feature.properties.RICHESSE;
-
-                    // Find corresponding CSV data for the CODEID
-                    var correspondingData = csvData.find(function(csvRow) {
-                        return csvRow.CODEID === feature.properties.CODEID;
-                    });
-
-                    // Add a marker on hover
-                    layer.on('mouseover', function(event) {
-                        var marker = L.marker(event.latlng).addTo(map);
-                        marker.bindPopup(
-                            "Neighborhood: " + neighborhoodName + "<br>" +
-                            "Number of Immigrants: " + (correspondingData ? correspondingData.NUM : "N/A") + "<br>" +
-                            "Average: " + richness
-                        ).openPopup();
-                    });
-
-                    // Remove marker on mouseout
-                    layer.on('mouseout', function() {
-                        map.closePopup();
-                    });
+                if (!Array.isArray(parsedCsvData)) {
+                    console.error("Error parsing CSV data:", parsedCsvData);
+                    return; // Stop execution if parsing is unsuccessful
                 }
-            }).addTo(map);
-        });
+
+                // Initialize the map
+                var map = L.map('map').setView([45.5569, -73.6870], 11);
+
+                var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(map);
+
+                // Add GeoJSON layer to the map
+                var geoJsonLayer = L.geoJson(statesData, {
+                    onEachFeature: function(feature, layer) {
+                        // Access properties directly from GeoJSON
+                        var neighborhoodName = feature.properties.NOM;
+                        var richness = feature.properties.RICHESSE;
+
+                        // Find corresponding CSV data for the CODEID
+                        var correspondingData = parsedCsvData.find(function(csvRow) {
+                            return csvRow.CODEID === feature.properties.CODEID;
+                        });
+
+                        // Add a marker on hover
+                        layer.on('mouseover', function() {
+                            var marker = L.marker(layer.getBounds().getCenter()).addTo(map);
+                            marker.bindPopup(
+                                "Neighborhood: " + neighborhoodName + "<br>" +
+                                "Number of Immigrants: " + (correspondingData ? correspondingData.NUM : "N/A") + "<br>" +
+                                "Average: " + richness
+                            ).openPopup();
+                        });
+
+                        // Remove marker on mouseout
+                        layer.on('mouseout', function() {
+                            map.closePopup();
+                        });
+                    }
+                }).addTo(map);
+            });
     </script>
 </body>
 </html>
