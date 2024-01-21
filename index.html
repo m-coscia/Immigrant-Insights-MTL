@@ -24,14 +24,13 @@
 
     <script>
         // Initialize the map
-        var map = L.map('map').setView([37.8, -96], 4);
+        var map = L.map('map').setView([45.5569, -73.6870], 11);
 
         var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
 
-        // Assuming 'statesData' variable is defined in your states.js file
         L.geoJson(statesData).addTo(map);
     </script>
 </body>
