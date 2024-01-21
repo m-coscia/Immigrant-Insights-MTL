@@ -54,10 +54,20 @@
                         // Access properties directly from GeoJSON
                         var neighborhoodName = feature.properties.NOM;
                         var richesse = feature.properties.RICHESSE; // change richness to richesse
-
+                        
+                        /*
                         // Find corresponding CSV data for the ARRON
                         var correspondingData = parsedCsvData.find(function(csvRow) {
                             return csvRow.ARRON === feature.properties.ARRON;
+                        });
+                        */
+
+                        var correspondingData = 0;
+
+                        parsedCsvData.array.forEach(element => {
+                            if(element.ARRON === feature.properties.ARRON){
+                                correspondingData += 1;
+                            }
                         });
 
                         // Add a marker on hover
