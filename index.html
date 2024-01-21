@@ -1,99 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map Page</title>
-
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossorigin=""/>
-
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""></script>
-
-    <!-- D3.js -->
-    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-
-    <!-- Include your GeoJSON data -->
-    <script src="states.js"></script>
-</head>
-<body>
-    <!-- map -->
-    <div id="map" style="height: 100vh"></div>
-
-    <script>
-        // Load CSV data
-        fetch("sondage-echo-donnees-2020.csv")
-            .then(response => response.text())
-            .then(csvData => {
-                // Parse CSV data
-                var parsedCsvData = d3.csvParse(csvData);
-
-                console.log(parsedCsvData); // Log the parsed CSV data to the console
-
-                if (!Array.isArray(parsedCsvData)) {
-                    console.error("Error parsing CSV data:", parsedCsvData);
-                    return; // Stop execution if parsing is unsuccessful
-                }
-
-                // Initialize the map
-                var map = L.map('map').setView([45.5569, -73.6870], 11);
-
-                var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    minZoom: 8,
-                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                }).addTo(map);
-
-                // Add GeoJSON layer to the map
-                var geoJsonLayer = L.geoJson(statesData, {
-                    onEachFeature: function(feature, layer) {
-                        // Access properties directly from GeoJSON
-                        var neighborhoodName = feature.properties.NOM;
-                        var richesse = feature.properties.RICHESSE; // change richness to richesse
-                        
-                        /*
-                        // Find corresponding CSV data for the ARRON
-                        var correspondingData = parsedCsvData.find(function(csvRow) {
-                            return csvRow.ARRON === feature.properties.ARRON;
-                        });
-                        */
-                        
-                        var correspondingData = 0;
-
-                        if(feature.properties.ARRON < 20) {
-                            parsedCsvData.forEach(element => {
-                            console.log("Neighborhood:", feature.properties.NOM);
-                            console.log("ARRON in GeoJSON:", feature.properties.ARRON);
-                            console.log("ARRON in CSV:", element.ARRON);
-                            if(element.ARRON == feature.properties.ARRON){
-                                correspondingData += 1;
-                                console.log("Hi!");
-                            }
-                        });
-                        }
-                        
-                        // Add a marker on hover
-                        layer.on('mouseover', function() {
-                            var marker = L.marker(layer.getBounds().getCenter()).addTo(map);
-                            marker.bindPopup(
-                                "Neighborhood: " + neighborhoodName + "<br>" +
-                                "Number of Immigrants: " + (correspondingData ? correspondingData.NUM : "N/A") + "<br>" +
-                                "Average: " + richesse
-                            ).openPopup();
-                        });
-
-                        // Remove marker on mouseout
-                        layer.on('mouseout', function() {
-                            map.closePopup();
-                        });
-                    }
-                }).addTo(map);
-            });
-    </script>
-</body>
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Map Page</title>
+      <!-- Leaflet CSS -->
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+         crossorigin=""/>
+      <!-- Leaflet JS -->
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+         crossorigin=""></script>
+      <!-- D3.js -->
+      <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+      <!-- Include your GeoJSON data -->
+      <script src="states.js"></script>
+   </head>
+   <body>
+      <!-- map -->
+      <div id="map" style="height: 100vh"></div>
+      <script>
+         // Load CSV data
+         fetch("sondage-echo-donnees-2020.csv")
+             .then(response => response.text())
+             .then(csvData => {
+                 // Parse CSV data
+                 var parsedCsvData = d3.csvParse(csvData);
+         
+                 console.log(parsedCsvData); // Log the parsed CSV data to the console
+         
+                 if (!Array.isArray(parsedCsvData)) {
+                     console.error("Error parsing CSV data:", parsedCsvData);
+                     return; // Stop execution if parsing is unsuccessful
+                 }
+         
+                 // Initialize the map
+                 var map = L.map('map').setView([45.5569, -73.6870], 11);
+         
+                 var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                     maxZoom: 19,
+                     minZoom: 8,
+                     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                 }).addTo(map);
+         
+                 // Add GeoJSON layer to the map
+                 var geoJsonLayer = L.geoJson(statesData, {
+                     onEachFeature: function(feature, layer) {
+                         // Access properties directly from GeoJSON
+                         var neighborhoodName = feature.properties.NOM;
+                         var richesse = feature.properties.RICHESSE; // change richness to richesse
+                         
+                         /*
+                         // Find corresponding CSV data for the ARRON
+                         var correspondingData = parsedCsvData.find(function(csvRow) {
+                             return csvRow.ARRON === feature.properties.ARRON;
+                         });
+                         */
+                         
+                         var correspondingData = 0;
+         
+                         if(feature.properties.ARRON < 20) {
+                             parsedCsvData.forEach(element => {
+                             console.log("Neighborhood:", feature.properties.NOM);
+                             console.log("ARRON in GeoJSON:", feature.properties.ARRON);
+                             console.log("ARRON in CSV:", element.ARRON);
+                             if(element.ARRON == feature.properties.ARRON){
+                                 correspondingData += 1;
+                                 console.log("Hi!");
+                             }
+                         });
+                         }
+                         
+         
+         
+         
+         
+         
+                         // Add a popup on hover
+                         layer.bindPopup(
+             "Neighborhood: " + neighborhoodName + "<br>" +
+             "Number of Immigrants: " + (correspondingData ? correspondingData.NUM : "N/A") + "<br>" +
+             "Average: " + richesse
+         );
+         
+         // Show popup on mouseover
+         layer.on('mouseover', function() {
+             layer.openPopup();
+         });
+         
+         // Remove popup on mouseout
+         layer.on('mouseout', function() {
+             layer.closePopup();
+         });
+         }
+         }).addTo(map);
+             });
+      </script>
+   </body>
 </html>
