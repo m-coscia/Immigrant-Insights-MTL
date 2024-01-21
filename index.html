@@ -265,11 +265,11 @@
             });
 
             var overlays = {
-                "Wealth Layer": geoJsonLayerWealth,
-                "People Layer": geoJsonLayerPeople,
+                "legend1": geoJsonLayerWealth,
+                "legend2": geoJsonLayerPeople,
             };
 
-            L.control.layers(baselayer,overlays).addTo(map);
+            L.control.layers(baseLayer,overlays).addTo(map);
         
             // getColor f-n
             function getColor(d) {
