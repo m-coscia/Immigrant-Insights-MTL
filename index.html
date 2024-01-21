@@ -23,7 +23,7 @@
 </head>
 <body>
     <!-- map -->
-    <div id="map" style="height: 800px"></div>
+    <div id="map" style="height: 100%"></div>
 
     <script>
         // Load CSV data
@@ -45,6 +45,7 @@
 
                 var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
+                    minZoom: 8,
                     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 }).addTo(map);
 
@@ -57,35 +58,29 @@
                         
                         /*
                         // Find corresponding CSV data for the ARRON
-                        var correspondingData = 0;
-
-                        parsedCsvData.forEach(element => {
-                            if(element.ARRON === feature.properties.ARRON){
-                                correspondingData += 1;
-                            }
+                        var correspondingData = parsedCsvData.find(function(csvRow) {
+                            return csvRow.ARRON === feature.properties.ARRON;
                         });
                         */
                         
                         var correspondingData = 0;
 
-                        if(feature.properties.ARRON < 20){
-                            parsedCsvData.forEach(element => {
+                        parsedCsvData.forEach(element => {
                             console.log("Neighborhood:", feature.properties.NOM);
                             console.log("ARRON in GeoJSON:", feature.properties.ARRON);
                             console.log("ARRON in CSV:", element.ARRON);
-                            if(element.ARRON == feature.properties.ARRON){
+                            if(element.ARRON === feature.properties.ARRON){
                                 correspondingData += 1;
                                 console.log("Hi!");
                             }
                         });
-                        }
 
                         // Add a marker on hover
                         layer.on('mouseover', function() {
                             var marker = L.marker(layer.getBounds().getCenter()).addTo(map);
                             marker.bindPopup(
                                 "Neighborhood: " + neighborhoodName + "<br>" +
-                                "Number of Immigrants: " + (correspondingData == 0 ? "N/A" : correspondingData) + "<br>" +
+                                "Number of Immigrants: " + (correspondingData ? correspondingData.NUM : "N/A") + "<br>" +
                                 "Average: " + richesse
                             ).openPopup();
                         });
