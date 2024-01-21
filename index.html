@@ -1,1 +1,38 @@
-Hello Pycharm!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Page</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+
+    <!-- Include your GeoJSON data -->
+    <script src="states.js"></script>
+</head>
+<body>
+    <!-- map -->
+    <div id="map" style="height: 800px"></div>
+
+    <script>
+        // Initialize the map
+        var map = L.map('map').setView([37.8, -96], 4);
+
+        var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        // Assuming 'statesData' variable is defined in your states.js file
+        L.geoJson(statesData).addTo(map);
+    </script>
+</body>
+</html>
