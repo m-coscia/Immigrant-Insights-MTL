@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map Page</title>
+    <title>Immigrant Insights MTL</title>
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -251,17 +251,17 @@
             // switch legends when changing layer groups
             map.on('overlayadd', function(event) {
                 if(event.layer === geoJsonLayerWealth) {
-                    map.removeControl(variable2);
-                    variable1.addTo(map);
+                    map.removeControl(legend2);
+                    legend1.addTo(map);
                 } else if(event.layer === geoJsonLayerPeople) {
-                    map.removeControl(legendWealth);
-                    variable2.addTo(map);
+                    map.removeControl(legend1);
+                    legend2.addTo(map);
                 }
             });
 
             map.on('overlayremove',function() {
-                map.removeControl(variable1);
-                map.removeControl(variable2);
+                map.removeControl(legend1);
+                map.removeControl(legend2);
             });
 
             var overlays = {
