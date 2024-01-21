@@ -44,7 +44,7 @@
 
                 var tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
-                    minZoom: 8,
+                    minZoom: 12,
                     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 }).addTo(map);
 
@@ -68,20 +68,22 @@
                                 }
                             });
                         }
+
                         
-                        // Add a marker on hover
-                        layer.on('mouseover', function() {
-                            var marker = L.marker(layer.getBounds().getCenter()).addTo(map);
-                            marker.bindPopup(
+                        // popup on hover
+                        layer.bindPopup(
                                 "Neighborhood: " + neighborhoodName + "<br>" +
                                 "Number of Immigrants: " + (correspondingData == 0 ? "N/A" : correspondingData) + "<br>" +
                                 "Average: " + richesse
-                            ).openPopup();
+                        );
+
+                        // popup on mouseover
+                        layer.on('mouseover', function() {
+                            layer.openPopup();
                         });
 
-                        // Remove marker on mouseout
                         layer.on('mouseout', function() {
-                            map.closePopup();
+                            layer.closePopup();
                         });
                     }
                 }).addTo(map);
