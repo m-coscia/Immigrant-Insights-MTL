@@ -82,8 +82,14 @@
                     maxZoom: 19,
                     minZoom: 11,
                     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                    opacity: 0.6
+                    //opacity: 0.6
                 }).addTo(map);
+
+                var overlay = L.rectangle(map.getBounds(), {color: '#d6c39f', fillOpacity: 0.4}).addTo(map);
+
+                map.on('move', function() {
+                    overlay.setBounds(map.getBounds());
+                });
 
                 // Adds GeoJSON layer to the map
                 var geoJsonLayer = L.geoJson(statesData, {
