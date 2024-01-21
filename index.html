@@ -71,8 +71,11 @@
                     layer.bringToFront();
                 }
 
-                function resetHighlight(e) {
-                    geoJsonLayerWealth.resetStyle(e.target); //might break, look back into this
+                function resetHighlightWealth(e) {
+                    geoJsonLayerWealth.resetStyle(e.target);
+                }
+
+                function resetHighlightPeople(e) {
                     geoJsonLayerPeople.resetStyle(e.target);
                 }
 
@@ -134,7 +137,7 @@
                         
                         // popup on hover
                         layer.bindPopup(
-                                "Neighborhood: <b>" + neighborhoodName + "<b><br><br>" +
+                                "Neighborhood: <b>" + neighborhoodName + "</b><br><br>" +
                                 "Number of Immigrants: " + (correspondingData == 0 ? "N/A" : correspondingData) + "<br>" +
                                 "Average: " + richesse
                         );
@@ -148,7 +151,7 @@
                                 highlightFeature(e);
                             },
                             mouseout: function(e) {
-                                resetHighlight(e);
+                                resetHighlightWealth(e);
                             }
                         });
 
@@ -175,6 +178,7 @@
                         // Access properties directly from GeoJSON
                         var neighborhoodName = feature.properties.NOM;
                         var richesse = feature.properties.RICHESSE;
+                        console.log(peopleCounters);
                         var correspondingData = peopleCounters[feature.properties.ARRON - 1];
 
                         // popup on hover
@@ -193,7 +197,7 @@
                                 highlightFeature(e);
                             },
                             mouseout: function(e) {
-                                resetHighlight(e);
+                                resetHighlightPeople(e);
                             }
                         });
 
