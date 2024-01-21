@@ -39,6 +39,22 @@
                     return; // Stop execution if parsing is unsuccessful
                 }
 
+                function highlightFeature(e) {
+                    var layer = e.target;
+
+                    layer.setStyle({
+                        weight: 5,
+                        color: '#666',
+                        dashArray: '',
+                        fillOpacity: 0.7
+                    });
+                    layer.bringToFront();
+                }
+
+                function resetHighlight(e) {
+                    geoJsonLayer.resetStyle(e.target);
+                }
+
                 // Initializes the map
                 var map = L.map('map').setView([45.5569, -73.6870], 11);
 
@@ -89,8 +105,16 @@
                         );
 
                         // popup on click
-                        layer.on('click', function() {
-                            layer.openPopup();
+                        layer.on({
+                            click: function() {
+                                layer.openPopup();
+                            },
+                            mouseover: function(e) {
+                                highlightFeature(e);
+                            },
+                            mouseout: function(e) {
+                                resetHighlight(e);
+                            }
                         });
 
                         // close popup
