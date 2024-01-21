@@ -52,27 +52,14 @@ var geoJsonLayer = L.geoJson(statesData, {
 
         // Add a marker on hover
         layer.on('mouseover', function () {
-    console.log("Mouseover event triggered");
-
-    // Check popup content
-    var popupContent =
-        "Neighborhood: " + neighborhoodName + "<br>" +
-        "Number of Immigrants: " + (correspondingData ? correspondingData.NUM : "N/A") + "<br>" +
-        "Average: " + richness;
-
-    console.log("Popup Content:", popupContent);
-
-    // Use the feature's bounds for the popup
-    var bounds = layer.getBounds();
-
-    // Remove existing popups before adding a new one
-    map.closePopup();
-
-    // Show the popup at the feature's bounds
-    layer.bindPopup(popupContent).openPopup(bounds.getCenter());
-});
-
-
+            console.log("Mouseover event triggered");
+            var marker = L.marker(layer.getBounds().getCenter()).addTo(map);
+            marker.bindPopup(
+                "Neighborhood: " + neighborhoodName + "<br>" +
+                "Number of Immigrants: " + (correspondingData ? correspondingData.NUM : "N/A") + "<br>" +
+                "Average: " + richness
+            ).openPopup();
+        });
 
         // Remove marker on mouseout
         layer.on('mouseout', function () {
