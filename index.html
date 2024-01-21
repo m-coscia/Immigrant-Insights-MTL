@@ -53,11 +53,11 @@
                     onEachFeature: function(feature, layer) {
                         // Access properties directly from GeoJSON
                         var neighborhoodName = feature.properties.NOM;
-                        var richness = feature.properties.RICHESSE;
+                        var richesse = feature.properties.RICHESSE; // change richness to richesse
 
                         // Find corresponding CSV data for the CODEID
                         var correspondingData = parsedCsvData.find(function(csvRow) {
-                            return csvRow.CODEID === feature.properties.CODEID;
+                            return csvRow.ARRON === feature.properties.CODEID;
                         });
 
                         // Add a marker on hover
@@ -66,7 +66,7 @@
                             marker.bindPopup(
                                 "Neighborhood: " + neighborhoodName + "<br>" +
                                 "Number of Immigrants: " + (correspondingData ? correspondingData.NUM : "N/A") + "<br>" +
-                                "Average: " + richness
+                                "Average: " + richesse
                             ).openPopup();
                         });
 
