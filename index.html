@@ -102,16 +102,6 @@
                     geoJsonLayerPeople.resetStyle(e.target);
                 }
 
-                //header
-                var header = L.control({position: 'topright'});
-
-                header.onAdd = function (map) {
-                var div = L.DomUtil.create('div', 'info header'), labels = [];
-                div.innerHTML = '<div id="siteHeader">Immigrant Insights MTL</div>';
-                return div;
-                };
-                header.addTo(map);
-
                 //Array for holding counters
                 const peopleCounters = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
@@ -130,6 +120,16 @@
                 map.on('move', function() {
                     overlay.setBounds(map.getBounds());
                 });
+
+                //header
+                var header = L.control({position: 'topright'});
+
+                header.onAdd = function (map) {
+                var div = L.DomUtil.create('div', 'info header'), labels = [];
+                div.innerHTML = '<div id="siteHeader">Immigrant Insights MTL</div>';
+                return div;
+                };
+                header.addTo(map);
 
                 // Adds GeoJSON layer to the map
                 var geoJsonLayerWealth = L.geoJson(statesData, {
