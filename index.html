@@ -39,29 +39,6 @@
         margin-right: 8px;
         opacity: 0.7;
     }
-
-    .header {
-        line-height: 18px;
-        color: #555;
-        right: 37vw;
-        top:20px;
-
-    }
-    .header i {
-        width: 18px;
-        height: 18px;
-        float: left;
-        margin-left: 30px;
-        opacity: 0.7;
-    }
-    #siteHeader {
-        font-weight: bolder;
-        font-size: 40px;
-    }
-
-    body, body * {
-        font-family: 'DM Serif Display', serif;
-    }
 </style>
 
 <body>
@@ -121,16 +98,6 @@
                     overlay.setBounds(map.getBounds());
                 });
 
-                //header
-                var header = L.control({position: 'topright'});
-
-                header.onAdd = function (map) {
-                var div = L.DomUtil.create('div', 'info header'), labels = [];
-                div.innerHTML = '<div id="siteHeader">Immigrant Insights MTL</div>';
-                return div;
-                };
-                header.addTo(map);
-
                 // Adds GeoJSON layer to the map
                 var geoJsonLayerWealth = L.geoJson(statesData, {
                     style: function(feature) {
@@ -153,9 +120,13 @@
 
                         if(feature.properties.ARRON < 20) {
                             parsedCsvData.forEach(element => {
+                                console.log("Neighborhood:", feature.properties.NOM);
+                                console.log("ARRON in GeoJSON:", feature.properties.ARRON);
+                                console.log("ARRON in CSV:", element.ARRON);
                                 if(element.ARRON == feature.properties.ARRON){
                                     correspondingData += 1;
                                     peopleCounters[element.ARRON - 1] += 1;
+                                    console.log("Hi!");
                                 }
                             });
                         }
@@ -204,13 +175,14 @@
                         // Access properties directly from GeoJSON
                         var neighborhoodName = feature.properties.NOM;
                         var richesse = feature.properties.RICHESSE;
+                        console.log(peopleCounters);
                         var correspondingData = peopleCounters[feature.properties.ARRON - 1];
 
                         // popup on hover
                         layer.bindPopup(
-                                "Neighborhood: <b>" + neighborhoodName + "</b><br><br>" +
-                                "Number of Immigrants Polled Here: " + (correspondingData == 0 ? "N/A" : correspondingData) + "<br>" +
-                                "Average Household Income: " + richesse
+                                "Neighborhood: <b>" + neighborhoodName + "<b><br><br>" +
+                                "Number of Immigrants: " + (correspondingData == 0 ? "N/A" : correspondingData) + "<br>" +
+                                "Average: " + richesse
                         );
 
                         // popup on click
@@ -249,6 +221,20 @@
                     grades = [30000, 50000, 65000, 80000, 100000],
                     labels = [];
 
+                    // loop through intervals and generate a label with a colored square for each interval
+                    for (var i = 0; i < grades.length; i++) {
+                        div.innerHTML +=
+                            '<i style="background:' +getColor(grades[i] + 1) + '"></i> ' +
+                            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+                    }
+                    return div;
+                };
+
+                legend2.onAdd = function (map) {
+                    var div = L.DomUtil.create('div', 'info legend'),
+                    grades = [0, 1, 50, 100, 140, 180, 220],
+                    labels = [];
+                    
                     // loop through intervals and generate a label with a colored square for each interval
                     for (var i = 0; i < grades.length; i++) {
                         div.innerHTML +=
